@@ -30,9 +30,15 @@ class Provenance(BaseModel):
     search_queries: List[str] = []
 
 
+class QRCode(BaseModel):
+    file_name: str
+    content: str
+
+
 class ScanResponse(BaseModel):
     analysis: Analysis
     provenance: Optional[Provenance] = None
+    qr_codes: List[QRCode] = Field(default_factory=list)
 
 
 class ChatTurn(BaseModel):

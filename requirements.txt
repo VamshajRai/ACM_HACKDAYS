@@ -6,3 +6,5 @@ httpx
 beautifulsoup4
 python-dotenv
 pydantic
+Pillow>=10.0.0
+zxing-cpp>=2.2.0
