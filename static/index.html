@@ -30,10 +30,17 @@
   .panel { border:2px solid var(--line); background:rgba(255,251,234,.75); box-shadow:var(--shadow); }
   .panel-head { display:flex; align-items:center; justify-content:space-between; padding:10px 13px 0; } .panel-title { font-family:"Space Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.02em; }
   .panel-body { padding:12px; }
-  .input-panel textarea { display:block; width:100%; min-height:108px; padding:12px; resize:vertical; color:var(--ink); background:var(--cream); border:2px solid var(--line); outline:none; font-size:12px; line-height:1.6; }
+  .input-panel textarea { display:block; width:100%; min-height:132px; padding:12px; resize:vertical; color:var(--ink); background:var(--cream); border:2px solid var(--line); outline:none; font-size:12px; line-height:1.6; }
   .input-panel textarea:focus { box-shadow:inset 0 0 0 2px var(--yellow); }
+  .drop-zone { min-height:132px; margin-top:10px; padding:16px; border:2px dashed var(--line); background:var(--cream); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; transition:background .15s,border-color .15s; }
+  .drop-zone.is-dragging { border-color:var(--green); background:var(--mint); }
+  .drop-zone.is-disabled { opacity:.55; }
+  .drop-zone input { display:none; }
+  .file-label { color:var(--ink); font-size:11px; font-weight:700; text-decoration:underline; cursor:pointer; }
+  .file-help { color:var(--muted); font-size:9px; margin:0; }
+  .file-label.is-disabled { cursor:not-allowed; text-decoration:none; }
   .input-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; }
-  .file-label { color:var(--muted); font-size:10px; cursor:pointer; } .file-label strong { color:var(--ink); text-decoration:underline; } .file-label input { display:none; }
+  .input-actions .primary { margin-left:auto; }
   .primary,.ghost { border:2px solid var(--line); padding:9px 13px; color:var(--cream); background:var(--orange); box-shadow:2px 2px 0 var(--line); font-size:10px; text-transform:uppercase; font-weight:700; }
   .primary:hover,.ghost:hover { transform:translate(1px,1px); box-shadow:1px 1px 0 var(--line); } .primary:disabled { cursor:wait; opacity:.6; }
   .ghost { color:var(--ink); background:var(--cream); box-shadow:none; font-size:9px; padding:6px 9px; }
@@ -41,22 +48,27 @@
   .aside p { font-size:10px; line-height:1.6; border-top:1px dashed var(--line); padding:9px 0 0; margin:9px 0 0; } .aside p b { color:var(--orange); }
   .status { color:var(--orange); font-size:10px; min-height:15px; margin:8px 0 0; } .error { color:var(--orange); }
   .result { margin-top:27px; animation:reveal .45s ease both; } @keyframes reveal { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-  .score-panel { padding:14px 16px; display:grid; grid-template-columns:95px minmax(0,1fr) 210px; gap:16px; align-items:center; }
+  .score-panel { padding:14px 16px; display:grid; grid-template-columns:95px minmax(0,1fr); gap:16px; align-items:center; }
   .score { font-family:"Space Mono",monospace; color:var(--green); font-size:39px; line-height:1; } .score small { color:var(--muted); font:10px "DM Mono",monospace; }
   .verdict { font-family:"Space Mono",monospace; font-size:14px; text-transform:uppercase; margin-bottom:9px; } .confidence { font-family:"DM Mono",monospace; font-size:9px; color:var(--muted); margin-left:8px; }
   .meter { height:12px; border:1px solid var(--line); background:var(--paper-deep); } .meter-fill { height:100%; transition:width .6s ease; }
-  .summary { font-size:10px; line-height:1.6; margin:0; } .disclaimer { grid-column:2 / -1; color:var(--muted); font-size:9px; margin:0; }
+  .score-details { min-width:0; } .summary { font-size:10px; line-height:1.6; margin:10px 0 0; } .disclaimer { grid-column:2 / -1; color:var(--muted); font-size:9px; margin:0; }
   .result-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:12px; } .result-grid .wide { grid-column:1 / -1; } .result-grid .panel-body { padding-top:8px; }
   .flag { border-top:1px dashed var(--line); padding:9px 0 4px; font-size:10px; line-height:1.5; } .flag:first-child { border-top:0; } .flag-head { display:flex; justify-content:space-between; gap:10px; margin-bottom:3px; text-transform:uppercase; font-size:9px; } .flag-head span:last-child { color:var(--orange); }
   .clean { color:var(--green); font-size:10px; padding:8px; background:var(--mint); } ul { margin:0; padding-left:20px; } li { margin:7px 0; font-size:10px; line-height:1.5; }
   .provenance { font-size:10px; line-height:1.6; margin-bottom:10px; } .chat-log { max-height:190px; overflow:auto; margin-bottom:10px; }
   .message { max-width:83%; border:1px solid var(--line); padding:8px 10px; font-size:10px; line-height:1.5; margin:6px 0; white-space:pre-wrap; } .message.user { margin-left:auto; background:var(--yellow); } .message.model { background:var(--cream); }
   .chat-form { display:flex; gap:8px; } .chat-form input { min-width:0; flex:1; border:2px solid var(--line); background:var(--cream); padding:9px; color:var(--ink); font-size:10px; } .chat-form button { border:2px solid var(--line); background:var(--green); color:var(--cream); padding:0 13px; font-weight:700; }
-  .chat-float { position:fixed; right:22px; bottom:22px; z-index:20; display:flex; flex-direction:column; align-items:flex-end; gap:9px; }
-  .chat-launcher { border:2px solid var(--line); padding:10px 15px; background:var(--green); color:var(--cream); box-shadow:3px 3px 0 var(--line); font-size:10px; font-weight:700; text-transform:uppercase; }
+  .chat-float { position:fixed; right:22px; bottom:42px; z-index:1000; display:flex; flex-direction:column; align-items:flex-end; gap:9px; }
+  .chat-launcher { border:2px solid var(--line); padding:12px 17px; background:var(--green); color:var(--cream); box-shadow:3px 3px 0 var(--line); font-size:11px; font-weight:700; text-transform:uppercase; }
   .chat-launcher:hover { transform:translate(1px,1px); box-shadow:2px 2px 0 var(--line); }
-  .chat-dialog { width:min(310px,calc(100vw - 32px)); max-height:min(420px,calc(100vh - 100px)); overflow:auto; background:var(--paper); }
-  .chat-dialog .panel-head { padding:10px 12px; border-bottom:1px solid var(--line); } .chat-dialog .panel-body { padding:10px; }
+  .chat-dialog { width:min(480px,calc(100vw - 32px)); height:min(640px,calc(100vh - 112px)); min-height:320px; overflow:hidden; background:var(--paper); display:flex; flex-direction:column; }
+  .chat-dialog.is-expanded { position:fixed; inset:16px; z-index:1001; width:auto; height:auto; min-height:0; max-height:none; }
+  .chat-dialog .panel-head { padding:10px 12px; border-bottom:1px solid var(--line); flex:none; }
+  .chat-dialog .panel-body { padding:10px; display:flex; flex:1; flex-direction:column; min-height:0; }
+  .chat-log { flex:1; min-height:0; max-height:none; overflow:auto; margin-bottom:10px; }
+  .chat-tools { display:flex; align-items:center; gap:8px; }
+  .chat-expand { border:1px solid var(--line); background:var(--cream); color:var(--ink); padding:5px 8px; font-size:9px; text-transform:uppercase; }
   .chat-close { border:0; background:none; color:var(--orange); padding:0 0 0 8px; font-size:13px; line-height:1; }
   .support { margin-top:34px; } .support-copy { color:var(--muted); font-size:10px; line-height:1.6; max-width:650px; }
   .support-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:12px; }
@@ -68,7 +80,8 @@
   .protocol-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; margin-top:10px; }
   .protocol-step { border:1px solid rgba(29,43,37,.6); padding:10px; min-height:85px; background:rgba(233,221,169,.35); } .protocol-step b { display:block; color:var(--orange); font-size:9px; margin-bottom:8px; } .protocol-step p { font-size:9px; line-height:1.45; margin:0; }
   footer { border-top:1px solid var(--line); margin-top:25px; padding-top:9px; color:var(--muted); font-size:8px; display:flex; justify-content:space-between; gap:12px; }
-  @media (max-width:700px) { .shell { width:min(100% - 22px,600px); } .topbar { font-size:8px; } .topbar .live { font-size:0; } .topbar .live::after { content:"LIVE"; font-size:8px; } .steps { overflow:hidden; } .step { padding:8px 7px; font-size:7px; } .step b { width:15px; height:15px; margin-right:3px; } .layout,.result-grid,.support-grid,.protocol-grid { grid-template-columns:1fr; } .score-panel { grid-template-columns:76px 1fr; gap:12px; } .summary { grid-column:1 / -1; } .disclaimer { grid-column:1 / -1; } .result-grid .wide { grid-column:auto; } .input-actions { align-items:flex-end; flex-direction:column; } .file-label { align-self:flex-start; } .primary { width:100%; } .protocol-head { align-items:flex-start; flex-direction:column; } footer { flex-direction:column; } .chat-float { right:16px; bottom:16px; } }
+  @media (max-width:700px) { .shell { width:min(100% - 22px,600px); } .topbar { font-size:8px; } .topbar .live { font-size:0; } .topbar .live::after { content:"LIVE"; font-size:8px; } .steps { overflow:hidden; } .step { padding:8px 7px; font-size:7px; } .step b { width:15px; height:15px; margin-right:3px; } .layout,.result-grid,.support-grid,.protocol-grid { grid-template-columns:1fr; } .score-panel { grid-template-columns:76px 1fr; gap:12px; } .summary { grid-column:1 / -1; } .disclaimer { grid-column:1 / -1; } .result-grid .wide { grid-column:auto; } .input-actions { align-items:flex-end; flex-direction:column; } .file-label { align-self:flex-start; } .primary { width:100%; } .protocol-head { align-items:flex-start; flex-direction:column; } footer { flex-direction:column; } .chat-float { right:14px; bottom:24px; } .chat-dialog { width:min(460px,calc(100vw - 28px)); height:min(72vh,620px); min-height:280px; } .chat-dialog.is-expanded { inset:8px; width:auto; height:auto; min-height:0; } }
+  @media (max-width:700px) { .chat-dialog:not(.is-expanded) { width:min(460px,calc(100vw - 44px)); } }
 </style>
 </head>
 <body>
@@ -80,7 +93,7 @@
 const { useState } = React;
 
 function scoreColor(score) {
-  return score < 35 ? '#d95135' : score < 65 ? '#c58c13' : '#188d82';
+  return score < 35 ? '#188d82' : score < 65 ? '#c58c13' : '#d95135';
 }
 
 async function responseError(response) {
@@ -104,6 +117,32 @@ function Header() {
 function Intake({ onScan, busy, status }) {
   const [text, setText] = useState('');
   const [file, setFile] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [fileError, setFileError] = useState('');
+  const hasText = Boolean(text.trim());
+  const acceptedTypes = ['image/png', 'image/jpeg', 'image/webp', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'];
+
+  const chooseFile = candidate => {
+    setFileError('');
+    if (!candidate) return;
+    if (!acceptedTypes.includes(candidate.type)) {
+      setFileError('Choose a PNG, JPG, WebP, MP3, WAV, OGG, or MP4 file.');
+      return;
+    }
+    setFile(candidate);
+    setText('');
+  };
+
+  const handleDrop = event => {
+    event.preventDefault();
+    setIsDragging(false);
+    if (hasText) {
+      setFileError('Clear the text before adding a file.');
+      return;
+    }
+    chooseFile(event.dataTransfer.files[0]);
+  };
+
   const submit = event => { event.preventDefault(); onScan(text, file); };
   return (
     <>
@@ -115,15 +154,45 @@ function Intake({ onScan, busy, status }) {
             <span className="live">Ready for input</span>
           </div>
           <div className="panel-body">
-            <textarea value={text} onChange={event => setText(event.target.value)} placeholder="Paste a message, headline, offer, or URL..." />
+            <textarea
+              value={text}
+              disabled={Boolean(file) || busy}
+              onChange={event => { setText(event.target.value); setFileError(''); }}
+              placeholder={file ? 'Remove the selected file to enter text instead.' : 'Paste a message or URL in any language...'}
+            />
+            <div
+              className={`drop-zone ${isDragging ? 'is-dragging' : ''} ${hasText || busy ? 'is-disabled' : ''}`}
+              onDragOver={event => { event.preventDefault(); if (!hasText && !busy) setIsDragging(true); }}
+              onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget)) setIsDragging(false); }}
+              onDrop={handleDrop}
+            >
+              <input
+                id="signal-file"
+                type="file"
+                accept="image/png,image/jpeg,image/webp,audio/mpeg,audio/wav,audio/ogg,audio/mp4"
+                disabled={hasText || busy}
+                onChange={event => chooseFile(event.target.files[0] || null)}
+              />
+              {file ? (
+                <>
+                  <strong>{file.name}</strong>
+                  <p className="file-help">File ready for analysis</p>
+                  <button type="button" className="ghost" onClick={() => { setFile(null); setFileError(''); }}>Remove file</button>
+                </>
+              ) : (
+                <>
+                  <label className={`file-label ${hasText || busy ? 'is-disabled' : ''}`} htmlFor="signal-file">
+                    {hasText ? 'Clear the message to upload a file' : isDragging ? 'Drop file to attach' : 'Drop an image or audio file here'}
+                  </label>
+                  {!hasText && <p className="file-help">or click to browse · PNG, JPG, WebP, WAV, MP3, OGG, MP4</p>}
+                </>
+              )}
+            </div>
             <div className="input-actions">
-              <label className="file-label">
-                <input type="file" accept="image/png,image/jpeg,image/webp,audio/mpeg,audio/wav,audio/ogg,audio/mp4" onChange={event => setFile(event.target.files[0] || null)} />
-                <strong>{file ? file.name : 'Attach image or audio'}</strong> &nbsp; PNG, JPG, WAV, MP3 ...
-              </label>
+              {hasText && <button type="button" className="ghost" onClick={() => { setText(''); setFileError(''); }}>Clear text</button>}
               <button className="primary" disabled={busy}>{busy ? 'Analyzing...' : 'Run analysis  ->'}</button>
             </div>
-            <div className={`status ${status.error ? 'error' : ''}`}>{status.message}</div>
+            <div className={`status ${status.error || fileError ? 'error' : ''}`}>{fileError || status.message}</div>
           </div>
         </form>
         <aside className="panel aside">
@@ -143,15 +212,15 @@ function ScoreCard({ analysis, onReset }) {
     <>
       <div className="section-label">02 / readout <span>Signal report</span><button className="ghost" onClick={onReset}>New scan</button></div>
       <section className="panel score-panel">
-        <div className="score" style={{ color }}>{analysis.trust_score}<small> / 100</small></div>
-        <div>
+        <div className="score" style={{ color }}>{analysis.trust_score}<small> suspicion / 100</small></div>
+        <div className="score-details">
           <div className="verdict">
             {analysis.verdict}
             {analysis.confidence && <span className="confidence">confidence: {analysis.confidence}</span>}
           </div>
           <div className="meter"><div className="meter-fill" style={{ width: `${analysis.trust_score}%`, background: color }} /></div>
+          <p className="summary" style={{ color }}>{analysis.summary}</p>
         </div>
-        <p className="summary">{analysis.summary}</p>
         <p className="disclaimer">Score is a risk assessment, not proof of truth.</p>
       </section>
     </>
@@ -163,6 +232,7 @@ function Chat({ scan }) {
   const [history, setHistory] = useState([]);
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const ask = async event => {
     event.preventDefault();
@@ -190,13 +260,18 @@ function Chat({ scan }) {
   return (
     <div className="chat-float">
       <button className="chat-launcher" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="ai-chat-dialog">
-        {open ? 'Close AI chat' : 'Ask the model  ->'}
+        {open ? 'Close TrustScan AI' : 'Ask TrustScan AI  ->'}
       </button>
       {open && (
-        <section className="panel chat-dialog" id="ai-chat-dialog" role="dialog" aria-label="Ask the TrustScan model">
+        <section className={`panel chat-dialog ${expanded ? 'is-expanded' : ''}`} id="ai-chat-dialog" role="dialog" aria-label="Ask TrustScan AI">
           <div className="panel-head">
-            <div className="panel-title">Ask the model</div>
-            <button className="chat-close" onClick={() => setOpen(false)} aria-label="Close AI chat">x</button>
+            <div className="panel-title">TrustScan AI</div>
+            <div className="chat-tools">
+              <button className="chat-expand" onClick={() => setExpanded(!expanded)} aria-label={expanded ? 'Restore chat size' : 'Expand chat'}>
+                {expanded ? 'Restore' : 'Expand'}
+              </button>
+              <button className="chat-close" onClick={() => { setOpen(false); setExpanded(false); }} aria-label="Close AI chat">x</button>
+            </div>
           </div>
           <div className="panel-body">
             <div className="chat-log">

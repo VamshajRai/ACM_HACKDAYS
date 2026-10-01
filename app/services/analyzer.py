@@ -17,9 +17,15 @@ A screenshot cannot show the sender address, link targets or email headers. When
 deciding evidence, lower your CONFIDENCE and use the verdict "Needs Verification" with a mid score
 (40-65) instead of guessing. Put exactly what to check in verify_yourself.
 
-Score guide: 80-100 looks authentic, 40-79 uncertain or unverifiable, 0-39 strong scam indicators.
+Suspicion score: 0 means fully legitimate; 100 means highly suspicious. Use 0-19 for clearly legitimate
+content, 20-39 for low suspicion, 40-65 for uncertain or unverifiable content, 66-79 for suspicious
+content, and 80-100 for strong scam indicators. The score must increase as evidence of fraud increases.
 You cannot prove an image or audio clip is AI-made; express it as risk.
-Write in simple language a grandparent could understand."""
+Detect the language of the submitted content automatically. Analyze it in its original language without
+translating away context, slang, or cultural cues. For mixed-language content, use the dominant language.
+Write summary, red-flag details, legitimate signals, and verification claims in that language, using
+simple language a grandparent could understand. Keep verdict and confidence values exactly as required
+by the response schema."""
 
 
 async def analyze(text: Optional[str], file_bytes: Optional[bytes], mime: Optional[str]) -> Analysis:

@@ -9,7 +9,7 @@ class RedFlag(BaseModel):
 
 
 class Analysis(BaseModel):
-    trust_score: int = Field(ge=0, le=100, description="0 = almost certainly fake/scam, 100 = looks authentic")
+    trust_score: int = Field(ge=0, le=100, description="Suspicion score: 0 = fully legitimate, 100 = highly suspicious")
     verdict: Literal["Likely Authentic", "Needs Verification", "Suspicious", "Likely Fake/Scam"]
     confidence: Literal["low", "medium", "high"]
     summary: str
