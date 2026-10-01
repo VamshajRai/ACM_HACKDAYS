@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrustScan // signal intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f5edc9; --paper-deep:#e9dda9; --ink:#172621; --muted:#66716a; --line:#1d2b25; --orange:#d95135; --green:#188d82; --mint:#c6e1cd; --yellow:#f4cb58; --cream:#fffbea; --shadow:4px 4px 0 var(--line); }
+  * { box-sizing:border-box; }
+  html { background:var(--paper); }
+  body { margin:0; color:var(--ink); font-family:"DM Mono",monospace; background-color:var(--paper); background-image:radial-gradient(rgba(23,38,33,.17) .7px,transparent .7px); background-size:7px 7px; }
+  button,textarea,input { font:inherit; } button { cursor:pointer; } a { color:var(--green); }
+  .shell { width:min(100% - 34px,990px); margin:0 auto; padding-bottom:34px; }
+  .topbar { border-bottom:1px solid rgba(29,43,37,.45); height:39px; display:flex; align-items:center; justify-content:space-between; font-size:9px; letter-spacing:.08em; text-transform:uppercase; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; } .brand-mark { width:16px; height:16px; border:2px solid var(--line); background:var(--orange); display:grid; place-items:center; font-size:8px; }
+  .live { color:var(--green); } .live::before { content:""; display:inline-block; width:5px; height:5px; background:var(--green); margin-right:7px; vertical-align:1px; }
+  .eyebrow { margin:30px 0 9px; color:var(--orange); font-size:10px; letter-spacing:.12em; text-transform:uppercase; }
+  .hero { max-width:730px; } h1,h2,h3,p { margin-top:0; }
+  h1 { max-width:700px; margin-bottom:12px; font-family:"Space Mono",monospace; font-size:clamp(35px,7vw,70px); line-height:.9; letter-spacing:-.06em; text-transform:uppercase; }
+  h1 span { color:var(--orange); display:block; } .lede { max-width:430px; font-size:12px; line-height:1.65; color:var(--muted); }
+  .steps { display:flex; margin:27px 0 17px; border:2px solid var(--line); box-shadow:var(--shadow); background:var(--cream); max-width:650px; }
+  .step { flex:1; padding:10px 12px; font-size:9px; border-right:1px solid var(--line); text-transform:uppercase; } .step:last-child { border:0; }
+  .step b { display:inline-grid; place-items:center; width:18px; height:18px; border:1px solid var(--orange); color:var(--orange); margin-right:7px; font-size:9px; }
+  .section-label { color:var(--orange); font-size:9px; letter-spacing:.12em; text-transform:uppercase; margin:22px 0 6px; } .section-label span { color:var(--muted); }
+  .section-label .ghost { float:right; margin-top:-7px; }
+  .layout { display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:12px; align-items:start; }
+  .panel { border:2px solid var(--line); background:rgba(255,251,234,.75); box-shadow:var(--shadow); }
+  .panel-head { display:flex; align-items:center; justify-content:space-between; padding:10px 13px 0; } .panel-title { font-family:"Space Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.02em; }
+  .panel-body { padding:12px; }
+  .input-panel textarea { display:block; width:100%; min-height:108px; padding:12px; resize:vertical; color:var(--ink); background:var(--cream); border:2px solid var(--line); outline:none; font-size:12px; line-height:1.6; }
+  .input-panel textarea:focus { box-shadow:inset 0 0 0 2px var(--yellow); }
+  .input-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; }
+  .file-label { color:var(--muted); font-size:10px; cursor:pointer; } .file-label strong { color:var(--ink); text-decoration:underline; } .file-label input { display:none; }
+  .primary,.ghost { border:2px solid var(--line); padding:9px 13px; color:var(--cream); background:var(--orange); box-shadow:2px 2px 0 var(--line); font-size:10px; text-transform:uppercase; font-weight:700; }
+  .primary:hover,.ghost:hover { transform:translate(1px,1px); box-shadow:1px 1px 0 var(--line); } .primary:disabled { cursor:wait; opacity:.6; }
+  .ghost { color:var(--ink); background:var(--cream); box-shadow:none; font-size:9px; padding:6px 9px; }
+  .aside { background:var(--mint); padding:14px; min-height:150px; } .aside h3 { color:var(--orange); font-size:9px; text-transform:uppercase; margin-bottom:14px; }
+  .aside p { font-size:10px; line-height:1.6; border-top:1px dashed var(--line); padding:9px 0 0; margin:9px 0 0; } .aside p b { color:var(--orange); }
+  .status { color:var(--orange); font-size:10px; min-height:15px; margin:8px 0 0; } .error { color:var(--orange); }
+  .result { margin-top:27px; animation:reveal .45s ease both; } @keyframes reveal { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .score-panel { padding:14px 16px; display:grid; grid-template-columns:95px minmax(0,1fr) 210px; gap:16px; align-items:center; }
+  .score { font-family:"Space Mono",monospace; color:var(--green); font-size:39px; line-height:1; } .score small { color:var(--muted); font:10px "DM Mono",monospace; }
+  .verdict { font-family:"Space Mono",monospace; font-size:14px; text-transform:uppercase; margin-bottom:9px; } .meter { height:12px; border:1px solid var(--line); background:var(--paper-deep); } .meter-fill { height:100%; transition:width .6s ease; }
+  .summary { font-size:10px; line-height:1.6; margin:0; } .disclaimer { grid-column:2 / -1; color:var(--muted); font-size:9px; margin:0; }
+  .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; } .result-grid .wide { grid-column:1 / -1; } .result-grid .panel-body { padding-top:8px; }
+  .flag { border-top:1px dashed var(--line); padding:9px 0 4px; font-size:10px; line-height:1.5; } .flag:first-child { border-top:0; } .flag-head { display:flex; justify-content:space-between; gap:10px; margin-bottom:3px; text-transform:uppercase; font-size:9px; } .flag-head span:last-child { color:var(--orange); }
+  .clean { color:var(--green); font-size:10px; padding:8px; background:var(--mint); } ul { margin:0; padding-left:20px; } li { margin:7px 0; font-size:10px; line-height:1.5; }
+  .provenance { font-size:10px; line-height:1.6; margin-bottom:10px; } .chat-log { max-height:190px; overflow:auto; margin-bottom:10px; }
+  .message { max-width:83%; border:1px solid var(--line); padding:8px 10px; font-size:10px; line-height:1.5; margin:6px 0; white-space:pre-wrap; } .message.user { margin-left:auto; background:var(--yellow); } .message.model { background:var(--cream); }
+  .chat-form { display:flex; gap:8px; } .chat-form input { min-width:0; flex:1; border:2px solid var(--line); background:var(--cream); padding:9px; color:var(--ink); font-size:10px; } .chat-form button { border:2px solid var(--line); background:var(--green); color:var(--cream); padding:0 13px; font-weight:700; }
+  footer { border-top:1px solid var(--line); margin-top:25px; padding-top:9px; color:var(--muted); font-size:8px; display:flex; justify-content:space-between; gap:12px; }
+  @media (max-width:700px) { .shell { width:min(100% - 22px,600px); } .topbar { font-size:8px; } .topbar .live { font-size:0; } .topbar .live::after { content:"LIVE"; font-size:8px; } .steps { overflow:hidden; } .step { padding:8px 7px; font-size:7px; } .step b { width:15px; height:15px; margin-right:3px; } .layout,.result-grid { grid-template-columns:1fr; } .score-panel { grid-template-columns:76px 1fr; gap:12px; } .summary { grid-column:1 / -1; } .disclaimer { grid-column:1 / -1; } .result-grid .wide { grid-column:auto; } .input-actions { align-items:flex-end; flex-direction:column; } .file-label { align-self:flex-start; } .primary { width:100%; } footer { flex-direction:column; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState } = React;
+function scoreColor(score) { return score < 35 ? '#d95135' : score < 65 ? '#c58c13' : '#188d82'; }
+async function responseError(response) { try { const data = await response.json(); return typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail); } catch { return `Error ${response.status}`; } }
+function Header() { return <header className="topbar"><div className="brand"><span className="brand-mark">T</span> TrustScan</div><div className="live">Live analysis engine &nbsp;|&nbsp; v0.1</div></header>; }
+function Intake({ onScan, busy, status }) {
+  const [text, setText] = useState(''); const [file, setFile] = useState(null); const submit = event => { event.preventDefault(); onScan(text, file); };
+  return <><div className="section-label">01 / inspect <span>Bring us a signal</span></div><div className="layout"><form className="panel input-panel" onSubmit={submit}><div className="panel-head"><div className="panel-title">Bring us a signal</div><span className="live">Ready for input</span></div><div className="panel-body"><textarea value={text} onChange={event => setText(event.target.value)} placeholder="Paste a message, headline, offer, or URL..." /><div className="input-actions"><label className="file-label"><input type="file" accept="image/png,image/jpeg,image/webp,audio/mpeg,audio/wav,audio/ogg,audio/mp4" onChange={event => setFile(event.target.files[0] || null)} /><strong>{file ? file.name : 'Attach image or audio'}</strong> &nbsp; PNG, JPG, WAV, MP3 ...</label><button className="primary" disabled={busy}>{busy ? 'Analyzing...' : 'Run analysis  ->'}</button></div><div className={`status ${status.error ? 'error' : ''}`}>{status.message}</div></div></form><aside className="panel aside"><h3>The TrustScan lens</h3><p><b>01</b> Language & intent</p><p><b>02</b> Visual & contextual cues</p><p><b>03</b> Origin & claims</p></aside></div></>;
+}
+function ScoreCard({ analysis, onReset }) { const color = scoreColor(analysis.trust_score); return <><div className="section-label">02 / readout <span>Signal report</span><button className="ghost" onClick={onReset}>New scan</button></div><section className="panel score-panel"><div className="score" style={{color}}>{analysis.trust_score}<small> / 100</small></div><div><div className="verdict">{analysis.verdict}</div><div className="meter"><div className="meter-fill" style={{width:`${analysis.trust_score}%`,background:color}} /></div></div><p className="summary">{analysis.summary}</p><p className="disclaimer">Score is an assessment, not proof of truth.</p></section></>; }
+function Chat({ scan }) {
+  const [question, setQuestion] = useState(''); const [history, setHistory] = useState([]); const [busy, setBusy] = useState(false);
+  const ask = async event => { event.preventDefault(); const trimmed = question.trim(); if (!trimmed || busy) return; setQuestion(''); setBusy(true); const next = [...history,{role:'user',text:trimmed}]; setHistory(next); try { const response = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:trimmed,scan,history})}); if (!response.ok) throw new Error(await responseError(response)); const data = await response.json(); setHistory([...next,{role:'model',text:data.answer}]); } catch (error) { setHistory([...next,{role:'model',text:`Chat failed: ${error.message}`}]); } setBusy(false); };
+  return <section className="panel wide"><div className="panel-head"><div className="panel-title">Ask the model</div><span>Context aware</span></div><div className="panel-body"><div className="chat-log">{history.length ? history.map((message,index) => <div className={`message ${message.role === 'user' ? 'user' : 'model'}`} key={index}>{message.text}</div>) : <div className="clean">Make sense of this report with a follow-up question.</div>}</div><form className="chat-form" onSubmit={ask}><input value={question} onChange={event => setQuestion(event.target.value)} placeholder="Why was this flagged?" /><button disabled={busy}>{busy ? '...' : 'Ask'}</button></form></div></section>;
+}
+function Report({ scan, onReset }) { const {analysis,provenance} = scan; return <div className="result"><ScoreCard analysis={analysis} onReset={onReset} /><div className="result-grid"><section className="panel"><div className="panel-head"><div className="panel-title">Red flags</div><span>{analysis.red_flags.length ? `${analysis.red_flags.length} found` : 'Clear'}</span></div><div className="panel-body">{analysis.red_flags.length ? analysis.red_flags.map((flag,index) => <div className="flag" key={`${flag.category}-${index}`}><div className="flag-head"><span>{flag.category}</span><span>{flag.severity}</span></div>{flag.detail}</div>) : <div className="clean">No red flags found.</div>}</div></section><section className="panel"><div className="panel-head"><div className="panel-title">Open questions</div><span>Verify</span></div><div className="panel-body"><ul>{analysis.claims_to_verify.length ? analysis.claims_to_verify.map((claim,index) => <li key={index}>{claim}</li>) : <li>No specific claims were extracted.</li>}</ul></div></section><section className="panel wide"><div className="panel-head"><div className="panel-title">Origin trail</div><span>What we found</span></div><div className="panel-body"><p className="provenance">{provenance ? provenance.summary : 'Origin check unavailable for this scan.'}</p>{provenance?.sources?.length > 0 && <ul>{provenance.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}</a></li>)}</ul>}</div></section><Chat scan={scan} /></div></div>; }
+function App() {
+  const [scan,setScan] = useState(null); const [busy,setBusy] = useState(false); const [status,setStatus] = useState({message:'',error:false});
+  const runScan = async (text,file) => { if (!text.trim() && !file) { setStatus({message:'Add text or a file first.',error:true}); return; } const formData = new FormData(); if (text.trim()) formData.append('text',text.trim()); if (file) formData.append('file',file); setBusy(true); setStatus({message:'Signal received. Running analysis...',error:false}); try { const response = await fetch('/api/scan',{method:'POST',body:formData}); if (!response.ok) throw new Error(await responseError(response)); setScan(await response.json()); setStatus({message:'',error:false}); } catch (error) { setStatus({message:`Scan failed: ${error.message}`,error:true}); } setBusy(false); };
+  return <div className="shell"><Header /><main><div className="eyebrow">// signal intelligence for the real world</div><section className="hero"><h1>Know what<br /><span>you're looking at.</span></h1><p className="lede">Turn suspicious messages, claims, links, images, and audio into a clear, evidence-aware read in seconds.</p></section><nav className="steps"><div className="step"><b>01</b> Drop a signal</div><div className="step"><b>02</b> Read the clues</div><div className="step"><b>03</b> Ask better questions</div></nav><Intake onScan={runScan} busy={busy} status={status} />{scan && <Report scan={scan} onReset={() => setScan(null)} />}</main><footer><span>TrustScan / human-first verification</span><span>Make assessment, not proof of truth.</span></footer></div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
