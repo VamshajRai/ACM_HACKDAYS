@@ -43,7 +43,8 @@
   .result { margin-top:27px; animation:reveal .45s ease both; } @keyframes reveal { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
   .score-panel { padding:14px 16px; display:grid; grid-template-columns:95px minmax(0,1fr) 210px; gap:16px; align-items:center; }
   .score { font-family:"Space Mono",monospace; color:var(--green); font-size:39px; line-height:1; } .score small { color:var(--muted); font:10px "DM Mono",monospace; }
-  .verdict { font-family:"Space Mono",monospace; font-size:14px; text-transform:uppercase; margin-bottom:9px; } .meter { height:12px; border:1px solid var(--line); background:var(--paper-deep); } .meter-fill { height:100%; transition:width .6s ease; }
+  .verdict { font-family:"Space Mono",monospace; font-size:14px; text-transform:uppercase; margin-bottom:9px; } .confidence { font-family:"DM Mono",monospace; font-size:9px; color:var(--muted); margin-left:8px; }
+  .meter { height:12px; border:1px solid var(--line); background:var(--paper-deep); } .meter-fill { height:100%; transition:width .6s ease; }
   .summary { font-size:10px; line-height:1.6; margin:0; } .disclaimer { grid-column:2 / -1; color:var(--muted); font-size:9px; margin:0; }
   .result-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:12px; } .result-grid .wide { grid-column:1 / -1; } .result-grid .panel-body { padding-top:8px; }
   .flag { border-top:1px dashed var(--line); padding:9px 0 4px; font-size:10px; line-height:1.5; } .flag:first-child { border-top:0; } .flag-head { display:flex; justify-content:space-between; gap:10px; margin-bottom:3px; text-transform:uppercase; font-size:9px; } .flag-head span:last-child { color:var(--orange); }
@@ -77,26 +78,294 @@
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="text/babel">
 const { useState } = React;
-function scoreColor(score) { return score < 35 ? '#d95135' : score < 65 ? '#c58c13' : '#188d82'; }
-async function responseError(response) { try { const data = await response.json(); return typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail); } catch { return `Error ${response.status}`; } }
-function Header() { return <header className="topbar"><div className="brand"><span className="brand-mark">T</span> TrustScan</div><div className="live">Live analysis engine &nbsp;|&nbsp; v0.1</div></header>; }
+
+function scoreColor(score) {
+  return score < 35 ? '#d95135' : score < 65 ? '#c58c13' : '#188d82';
+}
+
+async function responseError(response) {
+  try {
+    const data = await response.json();
+    return typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail);
+  } catch {
+    return `Error ${response.status}`;
+  }
+}
+
+function Header() {
+  return (
+    <header className="topbar">
+      <div className="brand"><span className="brand-mark">T</span> TrustScan</div>
+      <div className="live">Live analysis engine &nbsp;|&nbsp; v0.1</div>
+    </header>
+  );
+}
+
 function Intake({ onScan, busy, status }) {
-  const [text, setText] = useState(''); const [file, setFile] = useState(null); const submit = event => { event.preventDefault(); onScan(text, file); };
-  return <><div className="section-label">01 / inspect <span>Bring us a signal</span></div><div className="layout"><form className="panel input-panel" onSubmit={submit}><div className="panel-head"><div className="panel-title">Bring us a signal</div><span className="live">Ready for input</span></div><div className="panel-body"><textarea value={text} onChange={event => setText(event.target.value)} placeholder="Paste a message, headline, offer, or URL..." /><div className="input-actions"><label className="file-label"><input type="file" accept="image/png,image/jpeg,image/webp,audio/mpeg,audio/wav,audio/ogg,audio/mp4" onChange={event => setFile(event.target.files[0] || null)} /><strong>{file ? file.name : 'Attach image or audio'}</strong> &nbsp; PNG, JPG, WAV, MP3 ...</label><button className="primary" disabled={busy}>{busy ? 'Analyzing...' : 'Run analysis  ->'}</button></div><div className={`status ${status.error ? 'error' : ''}`}>{status.message}</div></div></form><aside className="panel aside"><h3>The TrustScan lens</h3><p><b>01</b> Language & intent</p><p><b>02</b> Visual & contextual cues</p><p><b>03</b> Origin & claims</p></aside></div></>;
+  const [text, setText] = useState('');
+  const [file, setFile] = useState(null);
+  const submit = event => { event.preventDefault(); onScan(text, file); };
+  return (
+    <>
+      <div className="section-label">01 / inspect <span>Bring us a signal</span></div>
+      <div className="layout">
+        <form className="panel input-panel" onSubmit={submit}>
+          <div className="panel-head">
+            <div className="panel-title">Bring us a signal</div>
+            <span className="live">Ready for input</span>
+          </div>
+          <div className="panel-body">
+            <textarea value={text} onChange={event => setText(event.target.value)} placeholder="Paste a message, headline, offer, or URL..." />
+            <div className="input-actions">
+              <label className="file-label">
+                <input type="file" accept="image/png,image/jpeg,image/webp,audio/mpeg,audio/wav,audio/ogg,audio/mp4" onChange={event => setFile(event.target.files[0] || null)} />
+                <strong>{file ? file.name : 'Attach image or audio'}</strong> &nbsp; PNG, JPG, WAV, MP3 ...
+              </label>
+              <button className="primary" disabled={busy}>{busy ? 'Analyzing...' : 'Run analysis  ->'}</button>
+            </div>
+            <div className={`status ${status.error ? 'error' : ''}`}>{status.message}</div>
+          </div>
+        </form>
+        <aside className="panel aside">
+          <h3>The TrustScan lens</h3>
+          <p><b>01</b> Language &amp; intent</p>
+          <p><b>02</b> Visual &amp; contextual cues</p>
+          <p><b>03</b> Origin &amp; claims</p>
+        </aside>
+      </div>
+    </>
+  );
 }
-function ScoreCard({ analysis, onReset }) { const color = scoreColor(analysis.trust_score); return <><div className="section-label">02 / readout <span>Signal report</span><button className="ghost" onClick={onReset}>New scan</button></div><section className="panel score-panel"><div className="score" style={{color}}>{analysis.trust_score}<small> / 100</small></div><div><div className="verdict">{analysis.verdict}</div><div className="meter"><div className="meter-fill" style={{width:`${analysis.trust_score}%`,background:color}} /></div></div><p className="summary">{analysis.summary}</p><p className="disclaimer">Score is an assessment, not proof of truth.</p></section></>; }
+
+function ScoreCard({ analysis, onReset }) {
+  const color = scoreColor(analysis.trust_score);
+  return (
+    <>
+      <div className="section-label">02 / readout <span>Signal report</span><button className="ghost" onClick={onReset}>New scan</button></div>
+      <section className="panel score-panel">
+        <div className="score" style={{ color }}>{analysis.trust_score}<small> / 100</small></div>
+        <div>
+          <div className="verdict">
+            {analysis.verdict}
+            {analysis.confidence && <span className="confidence">confidence: {analysis.confidence}</span>}
+          </div>
+          <div className="meter"><div className="meter-fill" style={{ width: `${analysis.trust_score}%`, background: color }} /></div>
+        </div>
+        <p className="summary">{analysis.summary}</p>
+        <p className="disclaimer">Score is a risk assessment, not proof of truth.</p>
+      </section>
+    </>
+  );
+}
+
 function Chat({ scan }) {
-  const [question, setQuestion] = useState(''); const [history, setHistory] = useState([]); const [busy, setBusy] = useState(false); const [open, setOpen] = useState(false);
-  const ask = async event => { event.preventDefault(); const trimmed = question.trim(); if (!trimmed || busy || !scan) return; setQuestion(''); setBusy(true); const next = [...history,{role:'user',text:trimmed}]; setHistory(next); try { const response = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:trimmed,scan,history})}); if (!response.ok) throw new Error(await responseError(response)); const data = await response.json(); setHistory([...next,{role:'model',text:data.answer}]); } catch (error) { setHistory([...next,{role:'model',text:`Chat failed: ${error.message}`}]); } setBusy(false); };
-  return <div className="chat-float"><button className="chat-launcher" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="ai-chat-dialog">{open ? 'Close AI chat' : 'Ask the model  ->'}</button>{open && <section className="panel chat-dialog" id="ai-chat-dialog" role="dialog" aria-label="Ask the TrustScan model"><div className="panel-head"><div className="panel-title">Ask the model</div><button className="chat-close" onClick={() => setOpen(false)} aria-label="Close AI chat">x</button></div><div className="panel-body"><div className="chat-log">{history.length ? history.map((message,index) => <div className={`message ${message.role === 'user' ? 'user' : 'model'}`} key={index}>{message.text}</div>) : <div className="clean">{scan ? 'Make sense of this report with a follow-up question.' : 'Run a scan first to ask about a report.'}</div>}</div><form className="chat-form" onSubmit={ask}><input value={question} disabled={!scan || busy} onChange={event => setQuestion(event.target.value)} placeholder={scan ? 'Why was this flagged?' : 'Waiting for a scan...'} /><button disabled={!scan || busy}>{busy ? '...' : 'Ask'}</button></form></div></section>}</div>;
+  const [question, setQuestion] = useState('');
+  const [history, setHistory] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const ask = async event => {
+    event.preventDefault();
+    const trimmed = question.trim();
+    if (!trimmed || busy || !scan) return;
+    setQuestion('');
+    setBusy(true);
+    const next = [...history, { role: 'user', text: trimmed }];
+    setHistory(next);
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: trimmed, scan, history })
+      });
+      if (!response.ok) throw new Error(await responseError(response));
+      const data = await response.json();
+      setHistory([...next, { role: 'model', text: data.answer }]);
+    } catch (error) {
+      setHistory([...next, { role: 'model', text: `Chat failed: ${error.message}` }]);
+    }
+    setBusy(false);
+  };
+
+  return (
+    <div className="chat-float">
+      <button className="chat-launcher" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="ai-chat-dialog">
+        {open ? 'Close AI chat' : 'Ask the model  ->'}
+      </button>
+      {open && (
+        <section className="panel chat-dialog" id="ai-chat-dialog" role="dialog" aria-label="Ask the TrustScan model">
+          <div className="panel-head">
+            <div className="panel-title">Ask the model</div>
+            <button className="chat-close" onClick={() => setOpen(false)} aria-label="Close AI chat">x</button>
+          </div>
+          <div className="panel-body">
+            <div className="chat-log">
+              {history.length
+                ? history.map((message, index) => (
+                    <div className={`message ${message.role === 'user' ? 'user' : 'model'}`} key={index}>{message.text}</div>
+                  ))
+                : <div className="clean">{scan ? 'Make sense of this report with a follow-up question.' : 'Run a scan first to ask about a report.'}</div>}
+            </div>
+            <form className="chat-form" onSubmit={ask}>
+              <input value={question} disabled={!scan || busy} onChange={event => setQuestion(event.target.value)} placeholder={scan ? 'Why was this flagged?' : 'Waiting for a scan...'} />
+              <button disabled={!scan || busy}>{busy ? '...' : 'Ask'}</button>
+            </form>
+          </div>
+        </section>
+      )}
+    </div>
+  );
 }
-function Report({ scan, onReset }) { const {analysis,provenance} = scan; return <div className="result"><ScoreCard analysis={analysis} onReset={onReset} /><div className="result-grid"><section className="panel"><div className="panel-head"><div className="panel-title">Red flags</div><span>{analysis.red_flags.length ? `${analysis.red_flags.length} found` : 'Clear'}</span></div><div className="panel-body">{analysis.red_flags.length ? analysis.red_flags.map((flag,index) => <div className="flag" key={`${flag.category}-${index}`}><div className="flag-head"><span>{flag.category}</span><span>{flag.severity}</span></div>{flag.detail}</div>) : <div className="clean">No red flags found.</div>}</div></section><section className="panel"><div className="panel-head"><div className="panel-title">Open questions</div><span>Verify</span></div><div className="panel-body"><ul>{analysis.claims_to_verify.length ? analysis.claims_to_verify.map((claim,index) => <li key={index}>{claim}</li>) : <li>No specific claims were extracted.</li>}</ul></div></section><section className="panel wide"><div className="panel-head"><div className="panel-title">Origin trail</div><span>What we found</span></div><div className="panel-body"><p className="provenance">{provenance ? provenance.summary : 'Origin check unavailable for this scan.'}</p>{provenance?.sources?.length > 0 && <ul>{provenance.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}</a></li>)}</ul>}</div></section></div><SupportSections /></div>; }
-function SupportSections() { return <><section className="support"><div className="section-label">03 / escalation & crisis support <span>Immediate action</span></div><h2 className="panel-title">Critical threat or emergency dispatch</h2><p className="support-copy">If you or someone else is facing immediate physical danger, extortion, suicide coercion, or severe exploitation, do not wait for AI analysis. Escalate immediately to verified law enforcement and emergency response channels.</p><div className="support-grid"><article className="support-card"><div><h3>Report financial fraud</h3><p>Preserve the original message, transaction details, and account identifiers before reporting suspicious activity.</p></div><a className="support-link" href="https://www.cybercrime.gov.in/" target="_blank" rel="noreferrer">Open cybercrime portal  -&gt;</a></article><article className="support-card"><div><h3>Immediate danger</h3><p>Contact your local emergency number when there is a direct threat to life, safety, or physical wellbeing.</p></div><a className="support-link" href="tel:112">Call emergency services (112)  -&gt;</a></article><article className="support-card"><div><h3>Mental health crisis</h3><p>In India, Tele-MANAS provides 24/7 mental-health support for urgent emotional distress.</p></div><a className="support-link" href="tel:14416">Call Tele-MANAS (14416)  -&gt;</a></article></div></section><section className="panel protocol"><div className="protocol-head"><div><div className="section-label">Legal & forensic advisory <span>(not legal advice)</span></div><div className="panel-title">Evidence preservation protocol</div></div><span>Section 608 / evidence protocol</span></div><div className="protocol-grid"><div className="protocol-step"><b>Step 01</b><p>Do not delete WhatsApp, Telegram chats, SMS, or audio notes. Take timestamped screen captures.</p></div><div className="protocol-step"><b>Step 02</b><p>Preserve raw email headers, UPI transaction IDs, bank statements, APK installers, or originating phone numbers.</p></div><div className="protocol-step"><b>Step 03</b><p>Cease communication with extortionists immediately; do not transfer token sums, negotiate, or confront scammers alone.</p></div><div className="protocol-step"><b>Step 04</b><p>Export TrustScan Signal Report and preserve PDF metadata for Police / Cyber Cell submission.</p></div></div></section></>; }
+
+function Report({ scan, onReset }) {
+  const { analysis, provenance } = scan;
+  const legit = analysis.legit_signals || [];
+  const verify = analysis.verify_yourself || [];
+  return (
+    <div className="result">
+      <ScoreCard analysis={analysis} onReset={onReset} />
+      <div className="result-grid">
+        <section className="panel">
+          <div className="panel-head"><div className="panel-title">Red flags</div><span>{analysis.red_flags.length ? `${analysis.red_flags.length} found` : 'Clear'}</span></div>
+          <div className="panel-body">
+            {analysis.red_flags.length
+              ? analysis.red_flags.map((flag, index) => (
+                  <div className="flag" key={`${flag.category}-${index}`}>
+                    <div className="flag-head"><span>{flag.category}</span><span>{flag.severity}</span></div>
+                    {flag.detail}
+                  </div>
+                ))
+              : <div className="clean">No red flags found.</div>}
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head"><div className="panel-title">Looks genuine</div><span>{legit.length ? `${legit.length} found` : 'None'}</span></div>
+          <div className="panel-body">
+            <ul>{legit.length ? legit.map((item, index) => <li key={index}>{item}</li>) : <li>No clear genuine signals found.</li>}</ul>
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head"><div className="panel-title">Open questions</div><span>Verify</span></div>
+          <div className="panel-body">
+            <ul>{analysis.claims_to_verify.length ? analysis.claims_to_verify.map((claim, index) => <li key={index}>{claim}</li>) : <li>No specific claims were extracted.</li>}</ul>
+          </div>
+        </section>
+
+        <section className="panel wide">
+          <div className="panel-head"><div className="panel-title">Check it yourself</div><span>Do this first</span></div>
+          <div className="panel-body">
+            <ul>{verify.length ? verify.map((item, index) => <li key={index}>{item}</li>) : <li>No extra checks suggested.</li>}</ul>
+          </div>
+        </section>
+
+        <section className="panel wide">
+          <div className="panel-head"><div className="panel-title">Origin trail</div><span>What we found</span></div>
+          <div className="panel-body">
+            <p className="provenance">{provenance ? provenance.summary : 'Origin check unavailable for this scan.'}</p>
+            {provenance?.sources?.length > 0 && (
+              <ul>{provenance.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title}</a></li>)}</ul>
+            )}
+          </div>
+        </section>
+      </div>
+      <SupportSections />
+    </div>
+  );
+}
+
+function SupportSections() {
+  return (
+    <>
+      <section className="support">
+        <div className="section-label">03 / escalation &amp; crisis support <span>Immediate action</span></div>
+        <h2 className="panel-title">Critical threat or emergency dispatch</h2>
+        <p className="support-copy">If you or someone else is facing immediate physical danger, extortion, or severe exploitation, do not wait for AI analysis. Escalate immediately to verified law enforcement and emergency response channels.</p>
+        <div className="support-grid">
+          <article className="support-card">
+            <div><h3>Report financial fraud</h3><p>Preserve the original message, transaction details, and account identifiers before reporting. You can also call the national cybercrime helpline, 1930.</p></div>
+            <a className="support-link" href="https://www.cybercrime.gov.in/" target="_blank" rel="noreferrer">Open cybercrime portal -&gt;</a>
+          </article>
+          <article className="support-card">
+            <div><h3>Immediate danger</h3><p>Contact your local emergency number when there is a direct threat to life, safety, or physical wellbeing.</p></div>
+            <a className="support-link" href="tel:112">Call emergency services (112) -&gt;</a>
+          </article>
+          <article className="support-card">
+            <div><h3>Mental health crisis</h3><p>In India, Tele-MANAS provides 24/7 mental-health support for urgent emotional distress.</p></div>
+            <a className="support-link" href="tel:14416">Call Tele-MANAS (14416) -&gt;</a>
+          </article>
+        </div>
+      </section>
+
+      <section className="panel protocol">
+        <div className="protocol-head">
+          <div>
+            <div className="section-label">Evidence advisory <span>(not legal advice)</span></div>
+            <div className="panel-title">Evidence preservation protocol</div>
+          </div>
+          <span>Keep everything</span>
+        </div>
+        <div className="protocol-grid">
+          <div className="protocol-step"><b>Step 01</b><p>Do not delete WhatsApp, Telegram chats, SMS, or audio notes. Take timestamped screen captures.</p></div>
+          <div className="protocol-step"><b>Step 02</b><p>Preserve raw email headers, UPI transaction IDs, bank statements, APK installers, or originating phone numbers.</p></div>
+          <div className="protocol-step"><b>Step 03</b><p>Stop communicating with extortionists; do not transfer money, negotiate, or confront scammers alone.</p></div>
+          <div className="protocol-step"><b>Step 04</b><p>Save a screenshot of this TrustScan report to share with the Police or Cyber Cell along with your other evidence.</p></div>
+        </div>
+      </section>
+    </>
+  );
+}
+
 function App() {
-  const [scan,setScan] = useState(null); const [busy,setBusy] = useState(false); const [status,setStatus] = useState({message:'',error:false});
-  const runScan = async (text,file) => { if (!text.trim() && !file) { setStatus({message:'Add text or a file first.',error:true}); return; } const formData = new FormData(); if (text.trim()) formData.append('text',text.trim()); if (file) formData.append('file',file); setBusy(true); setStatus({message:'Signal received. Running analysis...',error:false}); try { const response = await fetch('/api/scan',{method:'POST',body:formData}); if (!response.ok) throw new Error(await responseError(response)); setScan(await response.json()); setStatus({message:'',error:false}); } catch (error) { setStatus({message:`Scan failed: ${error.message}`,error:true}); } setBusy(false); };
-  return <div className="shell"><Header /><main><div className="eyebrow">// signal intelligence for the real world</div><section className="hero"><h1>Know what<br /><span>you're looking at.</span></h1><p className="lede">Turn suspicious messages, claims, links, images, and audio into a clear, evidence-aware read in seconds.</p></section><nav className="steps"><div className="step"><b>01</b> Drop a signal</div><div className="step"><b>02</b> Read the clues</div><div className="step"><b>03</b> Ask better questions</div></nav><Intake onScan={runScan} busy={busy} status={status} />{scan && <Report scan={scan} onReset={() => setScan(null)} />}</main><Chat scan={scan} /><footer><span>TrustScan / human-first verification</span><span>Make assessment, not proof of truth.</span></footer></div>;
+  const [scan, setScan] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState({ message: '', error: false });
+
+  const runScan = async (text, file) => {
+    if (!text.trim() && !file) { setStatus({ message: 'Add text or a file first.', error: true }); return; }
+    const formData = new FormData();
+    if (text.trim()) formData.append('text', text.trim());
+    if (file) formData.append('file', file);
+    setBusy(true);
+    setStatus({ message: 'Signal received. Running analysis...', error: false });
+    try {
+      const response = await fetch('/api/scan', { method: 'POST', body: formData });
+      if (!response.ok) throw new Error(await responseError(response));
+      setScan(await response.json());
+      setStatus({ message: '', error: false });
+    } catch (error) {
+      setStatus({ message: `Scan failed: ${error.message}`, error: true });
+    }
+    setBusy(false);
+  };
+
+  return (
+    <div className="shell">
+      <Header />
+      <main>
+        <div className="eyebrow">// signal intelligence for the real world</div>
+        <section className="hero">
+          <h1>Know what<br /><span>you're looking at.</span></h1>
+          <p className="lede">Turn suspicious messages, claims, links, images, and audio into a clear, evidence-aware read in seconds.</p>
+        </section>
+        <nav className="steps">
+          <div className="step"><b>01</b> Drop a signal</div>
+          <div className="step"><b>02</b> Read the clues</div>
+          <div className="step"><b>03</b> Ask better questions</div>
+        </nav>
+        <Intake onScan={runScan} busy={busy} status={status} />
+        {scan && <Report scan={scan} onReset={() => setScan(null)} />}
+      </main>
+      <Chat scan={scan} />
+      <footer>
+        <span>TrustScan / human-first verification</span>
+        <span>Assessment, not proof of truth.</span>
+      </footer>
+    </div>
+  );
 }
+
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>

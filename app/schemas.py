@@ -9,11 +9,13 @@ class RedFlag(BaseModel):
 
 
 class Analysis(BaseModel):
-    """What Gemini returns in step 1 (structured JSON)."""
     trust_score: int = Field(ge=0, le=100, description="0 = almost certainly fake/scam, 100 = looks authentic")
-    verdict: Literal["Likely Authentic", "Suspicious", "Likely Fake/Scam"]
+    verdict: Literal["Likely Authentic", "Needs Verification", "Suspicious", "Likely Fake/Scam"]
+    confidence: Literal["low", "medium", "high"]
     summary: str
     red_flags: List[RedFlag]
+    legit_signals: List[str] = Field(description="Reasons the content looks genuine")
+    verify_yourself: List[str] = Field(description="Up to 3 concrete checks the user should do, e.g. sender domain, link target")
     claims_to_verify: List[str] = Field(description="Up to 3 short, checkable factual claims found in the content")
 
 
